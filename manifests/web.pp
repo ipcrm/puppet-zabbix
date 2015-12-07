@@ -240,8 +240,8 @@ class zabbix::web (
     # doing it ourself.
     file { $zabbix_template_dir:
       ensure => directory,
-      owner  => 'zabbix',
-      group  => 'zabbix',
+      owner  => 'root',
+      group  => 'root',
       mode   => '0755',
     } ->
     package { 'zabbixapi':
@@ -288,8 +288,8 @@ class zabbix::web (
 
   file { '/etc/zabbix/web':
     ensure  => directory,
-    owner   => 'zabbix',
-    group   => 'zabbix',
+    owner   => 'root',
+    group   => 'root',
     mode    => '0755',
     require => Package[$zabbix_web_package]
   }
