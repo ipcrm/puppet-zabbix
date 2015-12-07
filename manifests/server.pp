@@ -379,16 +379,37 @@ class zabbix::server (
       $db = 'mysql'
 
       # Execute the mysql scripts
-      class { 'zabbix::database::mysql':
-        zabbix_type          => 'server',
-        zabbix_version       => $zabbix_version,
-        database_schema_path => $database_schema_path,
-        database_name        => $database_name,
-        database_user        => $database_user,
-        database_password    => $database_password,
-        database_host        => $database_host,
-        database_path        => $database_path,
-        require              => Package["zabbix-server-${db}"],
+
+      # Added a check to determine if this host 
+      # is having all three components applied 
+      # and setup dependency
+      if defined(Class['Zabbix::Database']) {
+        class { 'zabbix::database::mysql':
+          zabbix_type          => 'server',
+          zabbix_version       => $zabbix_version,
+          database_schema_path => $database_schema_path,
+          database_name        => $database_name,
+          database_user        => $database_user,
+          database_password    => $database_password,
+          database_host        => $database_host,
+          database_path        => $database_path,
+          require              => [
+            Class['Zabbix::database'],
+            Package["zabbix-server-${db}"],
+          ]
+        }
+      } else {
+        class { 'zabbix::database::mysql':
+          zabbix_type          => 'server',
+          zabbix_version       => $zabbix_version,
+          database_schema_path => $database_schema_path,
+          database_name        => $database_name,
+          database_user        => $database_user,
+          database_password    => $database_password,
+          database_host        => $database_host,
+          database_path        => $database_path,
+          require              => Package["zabbix-server-${db}"],
+        }
       }
     }
     default: {
