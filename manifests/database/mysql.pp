@@ -46,11 +46,7 @@ class zabbix::database::mysql (
         path     => "/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:${database_path}",
         unless   => 'test -f /etc/zabbix/.schema.done',
         provider => 'shell',
-        require  =>
-          [
-            Package['zabbix-proxy-mysql'],
-            Class['Zabbix::Database']
-          ],
+        require  => Package['zabbix-proxy-mysql'],
         notify   => Service['zabbix-proxy'],
       }
     }
@@ -60,11 +56,7 @@ class zabbix::database::mysql (
         path     => "/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:${database_path}",
         unless   => 'test -f /etc/zabbix/.schema.done',
         provider => 'shell',
-        require  =>
-          [
-            Package['zabbix-server-mysql'],
-            Class['Zabbix::Database']
-          ],
+        require  => Package['zabbix-server-mysql'],
       } ->
       exec { 'zabbix_server_images.sql':
         command  => "cd ${schema_path} && if [ -f images.sql.gz ]; then gunzip images.sql.gz ; fi && mysql -h '${database_host}' -u '${database_user}' -p'${database_password}' -D '${database_name}' < images.sql && touch /etc/zabbix/.images.done",
